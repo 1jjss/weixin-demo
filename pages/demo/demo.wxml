@@ -1,0 +1,11 @@
+<!--pages/demo/demo.wxml-->
+<text>pages/demo/demo.wxml
+12321312312
+312
+
+</text>
+<text>{{helloworld}}</text>
+
+<i-button form-type="submit" type="ghost">提交</i-button>
+<button form-type="submit" type="ghost" >提交</button>
+

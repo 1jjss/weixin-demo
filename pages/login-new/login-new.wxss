@@ -1,0 +1,5 @@
+/* pages/login-new/login-new.wxss */
+#yanzhengma {
+  width: 10px;
+  color: aquamarine;
+}

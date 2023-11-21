@@ -1,0 +1,10 @@
+<!--pages/login-new/login-new.wxml-->
+<i-panel style="color: red;">
+  <i-input value="{{ value1 }}" title="用户名" autofocus placeholder="名字" mode="wrapped" />
+    <i-input value="{{ value2 }}" type="number" title="密码" placeholder="请输入手机号"  mode="wrapped" />
+    <i-input value="{{ value3 }}"  title="验证码" placeholder="请输入验证码" mode="wrapped" i-class="yanzhengma" />
+    <i-button bind:click="handleClick" type="info"  shape="circle" size="default"  style="color: red;" >登录</i-button>
+</i-panel>
+<i-panel title="无标题输入框">
+    <i-input value="{{ value5 }}" placeholder="请输入收货人姓名" />
+</i-panel>
