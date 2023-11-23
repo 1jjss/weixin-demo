@@ -1,1 +1,26 @@
 /* pages/chatAI/chatAi.wxss */
+.root {
+	width: 100%;
+  height: 70vh;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.item {
+	min-height: 50px;
+}
+.box{
+  padding:10px;
+  border-radius: 5px;
+  background-color: bisque;
+  display: inline-block;
+}
+.myMsg{
+  text-align: right;
+}
+.myMsg .box{
+  background-color: green;
+  color: #fff;
+}
+.scrollview{
+  height: 60vh;
+}

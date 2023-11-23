@@ -1,10 +1,23 @@
 <!--pages/chatAI/chatAi.wxml-->
-<i-card title="卡片标题" extra="额外内容" thumb="https://i.loli.net/2017/08/21/599a521472424.jpg">
-    <view slot="content">内容不错</view>
-    <view slot="footer">尾部内容</view>
-</i-card>
+<view class="root">
+  {{content.length - 1}}
+<!-- 展示聊天窗口 -->
+  <scroll-view  class="scrollview"scroll-y="true" scroll-into-view="{{toMess}}">
+  <!-- 用户 -->
+  <view wx:for="{{content}}"  class="item {{item.id == 1 ? 'myMsg' : ''}}" id="{{index}}">
+    <view class="box">
+    <!-- {{item.id}} -->
+      {{item.text}}
+    <!-- <text class="himText">{{item.text}}</text> -->
+    </view>
+  </view>
+  <!-- 自己 -->
+  
+  </scroll-view>
+</view>
+<!-- 发送消息 -->
 <i-panel>
   <i-icon type="translation" size="28" color="#80848f" />
-<i-input maxlength="50"/>
-<i-button>发送</i-button>
+  <i-input maxlength="50" model:value="{{mess}}"  />
+  <i-button class="buttonText" bind:click="sendMess">发送</i-button>
 </i-panel>
