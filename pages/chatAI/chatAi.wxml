@@ -2,7 +2,7 @@
 <view class="root">
   {{content.length - 1}}
 <!-- 展示聊天窗口 -->
-  <scroll-view  class="scrollview"scroll-y="true" scroll-into-view="{{toMess}}">
+  <scroll-view  class="scrollview"scroll-y="true" scroll-into-view="{{content.length - 1}}" scroll-top="{{50*(content.length - 1)}}">
   <!-- 用户 -->
   <view wx:for="{{content}}"  class="item {{item.id == 1 ? 'myMsg' : ''}}" id="{{index}}">
     <view class="box">

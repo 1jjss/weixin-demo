@@ -7,7 +7,10 @@ Page({
   data: {
     content: [],//聊天信息
     mess: '',
-    toMess: ''
+    toMess: '',
+    url: 'ws://192.168.0.232:8090',
+    that : this,
+    reconnectTimerId : null
   },
 
   /**
@@ -16,10 +19,70 @@ Page({
   onLoad(options) {
     this.dbWatcher();
     this.queryChat();
-    console.log(this.data)
+    this.connectWebSocket();
+    // console.log(this.data)
   },
 
-  
+   /**
+   * 连接WebSocket服务器
+   */
+  connectWebSocket: function () {
+    var that = this
+    wx.connectSocket({
+      url: that.data.url,
+      success: function (res) {
+        console.log('WebSocket连接成功'),
+        console.log("发送心跳")
+          that.data.heartbeatTimerId = setInterval(()=>{
+            wx.sendSocketMessage({
+              data: "{data:'你好', type: 2}",//心跳内容
+              success: function () {
+                console.log('发送心跳消息成功');
+              },
+              fail: function () {
+                console.log('发送心跳消息失败');
+              }
+            })
+          }, 5000); 
+        // 每隔5秒发送一次心跳消息
+        console.log(res);
+      },
+      fail: function (res) {
+        console.log('WebSocket连接失败:', res)
+      }
+    })
+    wx.onSocketOpen(function (res) {
+      console.log('WebSocket连接已打开')
+      that.setData({
+        socketOpen: true
+      })
+      // for (var i = 0; i < that.data.socketMsgQueue.length; i++) {
+      //   that.sendSocketMessage(that.data.socketMsgQueue[i])
+      // }
+      that.setData({
+        socketMsgQueue: []
+      })
+    })
+    wx.onSocketError(function (res) {
+      console.log('WebSocket连接打开失败:', res)
+    })
+    wx.onSocketClose(function (res) {
+      console.log('WebSocket连接已关闭:', res)
+      that.reconnet()
+      // that.setData({
+      //   socketOpen: false
+      // })
+    })
+    wx.onSocketMessage(function (res) {
+      console.log('接收到服务器发送的数据:', res.data)
+      var messages = that.data.messages
+      messages.push(res.data)
+      that.setData({
+        messages: messages,
+        scrollIntoView: 'message-' + messages.length
+      })
+    })
+  },
 
   //获取格式化的时间 yyyy-mm-dd-hh:mm-ss
 	getFormatTime(){
@@ -46,7 +109,7 @@ Page({
           id: 1,
           text: mess,
           // data: date
-          toMess: "item"+content.length - 1
+          toMess: `item"${that.data.content.length - 1}`
       })
     })
     wx.hideLoading({
@@ -60,7 +123,6 @@ Page({
   //数据库的监听器
   dbWatcher(){
     let that = this;
-  
     },
     //查询聊天
   queryChat(){
@@ -89,5 +151,38 @@ Page({
       complete: (res) => {},
     })
     console.log(that.data.content)
+  },
+  // 开始心跳定时器
+  StartHeartbeat() {
+    
+    },
+  //心跳测试
+  sendHeartBeat(){
+    wx.sendSocketMessage({
+      data: "{data:'你好', type: 1}",//心跳内容
+      success: function () {
+        console.log('发送心跳消息成功');
+      },
+      fail: function () {
+        console.log('发送心跳消息失败');
+      }
+    })
+  },
+  //重连
+  reconnet(){
+    let that = this
+    var reconnectTimerId = setInterval(function(){
+      wx.connectSocket({
+        url: that.data.url,
+        success: function () {
+          console.log('WebSocket重新连接成功');
+          clearInterval(reconnectTimerId);
+          reconnectTimerId = null;
+        },
+        fail: function () {
+          console.log('WebSocket重新连接失败');
+        }
+      },50000)
+    })
   }
 })
