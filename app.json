@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/demo/demo",
     "pages/chatAI/chatAi",
     "pages/login-new/login-new"
   ],
@@ -16,6 +17,17 @@
       "sdkVersionBegin": "3.0.0",
       "sdkVersionEnd": "15.255.255"
     }
+  },
+  "tabBar": {
+    "list": [{
+      "pagePath": "pages/demo/demo",
+      "text": "首页"
+    },
+    {
+      "pagePath": "pages/chatAI/chatAi",
+      "text": "聊天"
+    }
+  ]
   },
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",

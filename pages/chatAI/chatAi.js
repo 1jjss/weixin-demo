@@ -1,4 +1,6 @@
 // pages/chatAI/chatAi.js
+const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+
 Page({
 
   /**
@@ -8,11 +10,12 @@ Page({
     content: [],//聊天信息
     mess: '',
     toMess: '',
-    url: 'ws://192.168.0.232:8090',
+    url: 'ws://192.168.0.232:8090'+"?token="+wx.getStorageSync('token').data,
     that : this,
-    reconnectTimerId : null
+    reconnectTimerId : null,
+    localUrl: "http://127.0.0.1:8101/api/capi/chat/msg?token="+wx.getStorageSync('token').data,
+    token: "Bearer "+ wx.getStorageSync('token').data,
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
@@ -22,6 +25,7 @@ Page({
     this.connectWebSocket();
     // console.log(this.data)
   },
+  
 
    /**
    * 连接WebSocket服务器
@@ -31,19 +35,19 @@ Page({
     wx.connectSocket({
       url: that.data.url,
       success: function (res) {
-        console.log('WebSocket连接成功'),
-        console.log("发送心跳")
-          that.data.heartbeatTimerId = setInterval(()=>{
-            wx.sendSocketMessage({
-              data: "{data:'你好', type: 2}",//心跳内容
-              success: function () {
-                console.log('发送心跳消息成功');
-              },
-              fail: function () {
-                console.log('发送心跳消息失败');
-              }
-            })
-          }, 5000); 
+        // console.log('WebSocket连接成功'),
+        // console.log("发送心跳")
+          // that.data.heartbeatTimerId = setInterval(()=>{
+          //   wx.sendSocketMessage({
+          //     data: "{data:'你好', type: 2}",//心跳内容
+          //     success: function () {
+          //       console.log('发送心跳消息成功');
+          //     },
+          //     fail: function () {
+          //       console.log('发送心跳消息失败');
+          //     }
+          //   })
+          // }, 5000); 
         // 每隔5秒发送一次心跳消息
         console.log(res);
       },
@@ -75,7 +79,7 @@ Page({
     })
     wx.onSocketMessage(function (res) {
       console.log('接收到服务器发送的数据:', res.data)
-      var messages = that.data.messages
+      var messages = []
       messages.push(res.data)
       that.setData({
         messages: messages,
@@ -102,6 +106,37 @@ Page({
     // console.log(id,11)
     wx.showLoading({
       title: '发送ing.....',
+      mask: true,
+      success: (res) => {},
+      fail: (res) => {},
+      complete: (res) => {
+        wx.sendSocketMessage({
+          data:"{data:'发送请求', type: 2}"
+        })
+        wx.request({
+          url: this.data.localUrl,
+          method: 'POST',
+          data: {
+            roomId: 1,
+            msgType: 1,
+            body: {
+              content: "你好"
+            }
+          },
+          header: {
+            "Content-Type": "application/json",
+            "Authorization": that.data.token,
+          },
+          success: function(res) {
+            // 请求成功，处理返回的数据
+            console.log(res.data);
+          },
+          fail: function(err) {
+            // 请求失败，处理错误信息
+            console.error(err);
+          }
+        })
+      }
     })
     console.log(mess)
     that.setData({
